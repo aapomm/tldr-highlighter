@@ -1,0 +1,12 @@
+{
+  "title": "TLDR; Highlighter",
+  "name": "tldr-highlighter",
+  "version": "0.0.1",
+  "description": "An add-on for highlighting words in the view.",
+  "main": "index.js",
+  "author": "aapomm",
+  "engines": {
+    "firefox": ">=38.0a1"
+  },
+  "license": "MIT"
+}
