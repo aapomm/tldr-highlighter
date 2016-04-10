@@ -11,6 +11,17 @@ self.port.on('highlight-text', function(queryWord){
   });
 });
 
+self.port.on('detach', function(){
+  _clearHighlight($('body'));
+});
+
+
+
+
+//
+// Private Methods
+//
+
 var _highlightElement = function($el, queryWord){
   var elementHtml = '>' + $el.html() + '<',
       regex = new RegExp('(\\>[^\\<]*' + queryWord + '([^\\<]*)\\<)', 'gi'),

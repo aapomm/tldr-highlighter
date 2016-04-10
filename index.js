@@ -4,6 +4,12 @@ var tabs = require("sdk/tabs");
 var pageMod = require("sdk/page-mod");
 
 var text_entry = require("sdk/panel").Panel({
+  width: 147,
+  height: 40,
+  position: {
+    top: 0,
+    right: 0
+  },
   contentURL: data.url("text-entry.html"),
   contentScriptFile: data.url("get-text.js")
 });

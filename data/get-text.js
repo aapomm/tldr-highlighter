@@ -1,4 +1,4 @@
-var textArea = document.getElementById("edit-box");
+var textArea = document.getElementById("edit-field");
 
 textArea.addEventListener('keyup', function onkeyup(event){
   if (event.keyCode == 13) {
