@@ -2,41 +2,46 @@ var highlightedClassName = 'tldr-highlighter-plugin-highlighted-word';
 
 self.port.on('highlight-text', function(queryWord){
   var unallowedElements = 'script',
-      $elements = $('body').children().not(unallowedElements).withinviewport();
+      $elements = $('body').children().not(unallowedElements);
 
-  $elements.each(function(){
-    clearHighlight($(this));
+  $elements.each(function(){ _clearHighlight($(this)); });
 
-    highlightElement($(this), queryWord);
+  $elements.filter(':contains(' + queryWord + ')').withinviewport().each(function(){
+    _highlightElement($(this), queryWord);
   });
 });
 
-var highlightElement = function($el, queryWord){
-  var elementHtml = $el.html();
+var _highlightElement = function($el, queryWord){
+  var elementHtml = '>' + $el.html() + '<',
+      regex = new RegExp('(\\>[^\\<]*' + queryWord + '([^\\<]*)\\<)', 'gi'),
+      placeholderElement =
+        "<span class='" + highlightedClassName + "'></span>";
 
-  if (elementHtml.indexOf(queryWord) < 0) return 'continue';
+  var match = regex.exec(elementHtml);
+
+  while (match != null) {
+    var replacedMatch = _replaceAll(match[0], queryWord, placeholderElement);
+    elementHtml = elementHtml.replace(match[0], replacedMatch);
+    match = regex.exec(elementHtml);
+  }
 
   elementHtml =
-    replaceAll(
+    _replaceAll(
       elementHtml,
-      queryWord,
+      placeholderElement,
       "<span class='" + highlightedClassName + "'>" + queryWord + "</span>"
     );
 
-  $el.html(elementHtml);
+  $el.html(elementHtml.substring(1, elementHtml.length - 2));
 };
 
-var clearHighlight = function($el){
+var _clearHighlight = function($el){
   var elementHtml = $el.html(),
       regex = new RegExp('<span class="' + highlightedClassName + '">([\\s\\S]+?)</span>');
 
-  console.log(elementHtml);
-
   var match = regex.exec(elementHtml);
   while (match != null) {
-    console.log(match);
     elementHtml = elementHtml.replace(match[0], match[1]);
-    console.log(elementHtml);
     match = regex.exec(elementHtml);
   }
 
@@ -44,6 +49,6 @@ var clearHighlight = function($el){
 };
 
 
-var replaceAll = function(str, find, replace) {
+var _replaceAll = function(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
 };
