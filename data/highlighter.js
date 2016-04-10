@@ -23,19 +23,30 @@ self.port.on('detach', function(){
 //
 
 var _highlightElement = function($el, queryWord){
-  var elementHtml = '>' + $el.html() + '<',
-      regex = new RegExp('(\\>[^\\<]*' + queryWord + '([^\\<]*)\\<)', 'gi'),
-      placeholderElement =
-        "<span class='" + highlightedClassName + "'></span>";
+  var escapedQueryWord = _escapeRegex(queryWord);
+
+  // Matches everything between '>' and '<' if the queryWord is found.
+  var regex = new RegExp('(\\>[^\\<]*' + escapedQueryWord + '([^\\<]*)\\<)', 'g');
+
+  // HACK: add temporary '>' and '<' in elementHtml to match the queryWord
+  // directly in the element $el.
+  var elementHtml = '>' + $el.html() + '<';
+
+  // This is a temporary placeholder element that is used to replace the
+  // queryWord. The absence of the queryWord in this placeholder prevents the
+  // regex from infinitely matching this part of the elementHtml.
+  var placeholderElement = "<span class='" + highlightedClassName + "'></span>";
 
   var match = regex.exec(elementHtml);
 
   while (match != null) {
-    var replacedMatch = _replaceAll(match[0], queryWord, placeholderElement);
+    var replacedMatch =
+      _replaceAll(match[0], escapedQueryWord, placeholderElement);
     elementHtml = elementHtml.replace(match[0], replacedMatch);
     match = regex.exec(elementHtml);
   }
 
+  // Replace the placeholder with the actual wrapped element.
   elementHtml =
     _replaceAll(
       elementHtml,
@@ -43,7 +54,8 @@ var _highlightElement = function($el, queryWord){
       "<span class='" + highlightedClassName + "'>" + queryWord + "</span>"
     );
 
-  $el.html(elementHtml.substring(1, elementHtml.length - 2));
+  // Remove the temporary angle brackets.
+  $el.html(elementHtml.substring(1, elementHtml.length - 1));
 };
 
 var _clearHighlight = function($el){
@@ -59,7 +71,10 @@ var _clearHighlight = function($el){
   $el.html(elementHtml);
 };
 
-
 var _replaceAll = function(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
+};
+
+var _escapeRegex = function(s) {
+  return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };

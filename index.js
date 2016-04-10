@@ -39,7 +39,7 @@ text_entry.port.on("text-entered", function (text) {
   var pm = pageMod.PageMod({
     include: tabs.activeTab.url,
     attachTo: ['existing', 'top'],
-    contentScriptFile: [data.url('vendors/jquery-1.12.0.min.js'),
+    contentScriptFile: [data.url('vendors/jquery-2.2.3.min.js'),
                         data.url('vendors/withinviewport.js'),
                         data.url('vendors/jquery.withinviewport.js'),
                         data.url('highlighter.js')],
